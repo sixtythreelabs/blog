@@ -24,7 +24,7 @@ export const LandingNavigation = ({ isLoaded }: LandingNavigationProps) => {
 	const twitterScramble = useScrambleSignal();
 	const blogScramble = useScrambleSignal();
 	const contactScramble = useScrambleSignal();
-	const projectsScramble = useScrambleSignal();
+	const productsScramble = useScrambleSignal();
 
 	return (
 		<div className="grid grid-cols-2 font-mono tracking-tighter pt-4 gap-x-2">
@@ -95,17 +95,16 @@ export const LandingNavigation = ({ isLoaded }: LandingNavigationProps) => {
 
 			<TransitionLink
 				className="m-0 text-10xs text-off-white/80 group"
-				href={CONTENT.links.projects.href}
-				target="_blank"
-				rel="noreferrer"
-				onMouseEnter={projectsScramble.trigger}
-				onMouseLeave={projectsScramble.trigger}
+				href={CONTENT.links.products.href}
+				transitionLabel="Products"
+				onMouseEnter={productsScramble.trigger}
+				onMouseLeave={productsScramble.trigger}
 			>
-				<span aria-label={CONTENT.links.projects.label}>
+				<span aria-label={CONTENT.links.products.label}>
 					<ScrambleText
 						className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-2"
-						text={CONTENT.links.projects.label}
-						trigger={projectsScramble.signal}
+						text={CONTENT.links.products.label}
+						trigger={productsScramble.signal}
 						scrambleOnMount={isLoaded}
 					/>
 				</span>
