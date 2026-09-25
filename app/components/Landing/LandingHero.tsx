@@ -15,8 +15,8 @@ export function LandingHero({ isLoaded }: LandingHeroProps) {
 	return (
 		<div className="w-full max-w-2xl mb-4 md:mb-12">
 			<h1 className="flex flex-col gap-3 md:gap-4 text-sm md:text-base font-sans tracking-tighter text-off-white/70">
-				<ScrambleText text={CONTENT.hero.tagline} scrambleOnMount={isLoaded} />
-				<ScrambleText text={CONTENT.hero.work} scrambleOnMount={isLoaded} />
+				<ScrambleText text={CONTENT.hero.tagline} />
+				<ScrambleText text={CONTENT.hero.work} />
 				<span className="inline">
 					<ScrambleText text={CONTENT.hero.cta.prefix} scrambleOnMount={isLoaded} />
 					<a
