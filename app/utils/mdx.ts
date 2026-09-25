@@ -10,7 +10,7 @@ import { formatShortDate } from "./date";
 
 const BLOG_ROOT = path.join(process.cwd(), "content", "blog");
 const BLOG_EXTENSION = /.mdx$/;
-const FALLBACK_AUTHOR: ArticleAuthor = { name: "63bytes Team" };
+const FALLBACK_AUTHOR: ArticleAuthor = { name: "Sixty Three Labs Team" };
 
 export type BlogPreview = ArticleItem & {
 	slug: string;

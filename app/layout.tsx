@@ -365,11 +365,11 @@ const monaspaceNeon = localFont({
 
 export const metadata: Metadata = {
 	title: {
-		default: "63bytes",
-		template: "%s | 63bytes",
+		default: "sixtythreelabs",
+		template: "%s | stl",
 	},
-	description: "A place to think in public. Documenting experiments in code, design, AI, and life. Thoughts, unfinished ideas, and the process of building things.",
-	keywords: ["63bytes", "blog", "experiments", "software engineering", "AI", "crypto", "backend", "frontend", "design", "philosophy", "photography"],
+	description: "We build the connective layer for your infrastructure — one system across every machine, with boundaries and control intact.",
+	keywords: ["sixtythreelabs", "self-hosted systems", "infrastructure", "distributed systems", "blockchain", "software engineering", "AI", "backend", "frontend", "design", "philosophy", "photography"],
 	authors: [{ name: "Karan", url: "https://x.com/naraklog" }],
 	formatDetection: {
 		telephone: false,
