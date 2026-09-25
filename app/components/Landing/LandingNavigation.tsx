@@ -82,7 +82,14 @@ export const LandingNavigation = ({ isLoaded }: LandingNavigationProps) => {
 				</span>
 			</TransitionLink>
 
-			<TransitionLink className="m-0 text-10xs text-off-white/80 group" href={CONTENT.links.linkedin.href} onMouseEnter={contactScramble.trigger} onMouseLeave={contactScramble.trigger}>
+			<TransitionLink
+				className="m-0 text-10xs text-off-white/80 group"
+				href={CONTENT.links.linkedin.href}
+				target="_blank"
+				rel="noopener noreferrer"
+				onMouseEnter={contactScramble.trigger}
+				onMouseLeave={contactScramble.trigger}
+			>
 				<span aria-label={CONTENT.links.linkedin.label}>
 					<ScrambleText
 						className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-2"
