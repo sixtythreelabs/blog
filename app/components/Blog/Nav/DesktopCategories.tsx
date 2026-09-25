@@ -1,12 +1,11 @@
 "use client";
 
-import { CaretDownIcon, StackIcon, SquaresFourIcon, ListDashesIcon, SpeakerHighIcon, SpeakerSlashIcon, ClockCounterClockwiseIcon, HouseIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, SquaresFourIcon, ListDashesIcon, SpeakerHighIcon, SpeakerSlashIcon, ClockCounterClockwiseIcon, HouseIcon } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import { type CategoryOption, ENABLE_TIMELINE_VIEW } from "../../../types/posts";
 import { useOverflowMeasurement } from "../../../hooks/useOverflowMeasurement";
 import { useClickOutside } from "../../../hooks/useClickOutside";
 import { useEscapeKey } from "../../../hooks/useKeyboardShortcut";
-import { resolvePhosphorIcon } from "../../../utils/icons";
 import SearchBar from "./SearchBar";
 import TransitionLink from "../../TransitionLink";
 import { useSound } from "../../../context/SoundContext";
@@ -122,7 +121,6 @@ export default function DesktopCategories({
 							<div className="absolute top-full left-0 mt-2 bg-foreground border border-background shadow-lg z-50 min-w-[200px]" role="menu">
 								<ul className="p-1.5 max-h-72 overflow-auto">
 									{categories.map((category) => {
-										const IconComponent = resolvePhosphorIcon(category.icon);
 										return (
 											<li key={`all-${category.id}`}>
 											<button
@@ -136,8 +134,7 @@ export default function DesktopCategories({
 													}`}
 													role="menuitem"
 												>
-													<IconComponent size={16} weight="regular" />
-													{category.label}
+											{category.label}
 												</button>
 											</li>
 										);
@@ -148,7 +145,6 @@ export default function DesktopCategories({
 					</div>
 					<ul className="flex relative gap-4 whitespace-nowrap list-none font-semi-mono text-xs tracking-tighter overflow-hidden">
 						{visibleCategories.map((category) => {
-							const IconComponent = resolvePhosphorIcon(category.icon);
 							return (
 								<li key={category.id}>
 								<button
@@ -161,7 +157,6 @@ export default function DesktopCategories({
 										}`}
 										data-morph
 									>
-										<IconComponent size={16} weight="regular" />
 										{category.label}
 									</button>
 								</li>
@@ -214,11 +209,9 @@ export default function DesktopCategories({
 				className="md:flex hidden gap-4 whitespace-nowrap list-none font-semi-mono text-xs tracking-tighter absolute opacity-0 pointer-events-none -z-10"
 			>
 				{categoriesWithoutAll.map((category) => {
-					const IconComponent = resolvePhosphorIcon(category.icon);
 					return (
 						<li key={`measure-${category.id}`}>
 							<button className="flex items-center gap-2 px-3 py-1.5 h-8 box-border border">
-								<IconComponent size={16} />
 								{category.label}
 							</button>
 						</li>

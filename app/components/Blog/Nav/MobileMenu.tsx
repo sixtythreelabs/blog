@@ -8,7 +8,6 @@ import {
 	MagnifyingGlassIcon,
 	RowsIcon,
 	SquaresFourIcon,
-	StackIcon,
 	SpeakerHighIcon,
 	SpeakerSlashIcon,
 	ClockCounterClockwiseIcon,
@@ -18,7 +17,6 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { type CategoryOption, ENABLE_TIMELINE_VIEW } from "../../../types/posts";
 import TransitionLink from "../../TransitionLink";
-import { resolvePhosphorIcon } from "../../../utils/icons";
 import { useScrollDirection, useMediaQuery } from "../../../hooks";
 import { useSound } from "../../../context/SoundContext";
 
@@ -238,16 +236,10 @@ const MobileMenu = forwardRef<HTMLInputElement, MobileMenuProps>(function Mobile
 												aria-haspopup="menu"
 												aria-expanded={isMobileMenuOpen}
 											>
-												{(() => {
-													const activeCat = categories.find((cat) => cat.id === activeCategory);
-													const IconComponent = resolvePhosphorIcon(activeCat?.icon ?? "StackIcon");
-													return (
-														<>
-															{IconComponent && <IconComponent size={16} weight="duotone" />}
-															<span className="max-w-[40vw] truncate">{activeCat?.label}</span>
-														</>
-													);
-												})()}
+											{(() => {
+												const activeCat = categories.find((cat) => cat.id === activeCategory);
+												return <span className="max-w-[40vw] truncate">{activeCat?.label}</span>;
+											})()}
 											</button>
 										</>
 									)}
@@ -270,7 +262,6 @@ const MobileMenu = forwardRef<HTMLInputElement, MobileMenuProps>(function Mobile
 				<div className="mx-auto w-full max-w-[1080px] border border-background bg-foreground/80 backdrop-blur-sm shadow-lg font-semi-mono">
 					<ul className="p-2">
 						{categories.map((category) => {
-							const IconComponent = resolvePhosphorIcon(category.icon);
 							return (
 								<li key={`mobile-${category.id}`}>
 									<button
@@ -284,7 +275,6 @@ const MobileMenu = forwardRef<HTMLInputElement, MobileMenuProps>(function Mobile
 										}`}
 										role="menuitem"
 									>
-										<IconComponent size={16} weight="duotone" />
 										{category.label}
 									</button>
 								</li>

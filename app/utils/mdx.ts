@@ -5,7 +5,6 @@ import { cache } from "react";
 import type { JSX } from "react";
 
 import type { ArticleFrontmatter, ArticleItem, ArticleAuthor, IconKey, CategoryOption } from "../types/posts";
-import { categoryIconMap, DEFAULT_CATEGORY_ICON } from "../types/posts";
 import { formatShortDate } from "./date";
 
 const BLOG_ROOT = path.join(process.cwd(), "content", "blog");
@@ -128,11 +127,10 @@ export const getAllCategories = cache(async (): Promise<CategoryOption[]> => {
 	const uniqueCategories = [...new Set(posts.map((p) => p.category))];
 
 	return [
-		{ id: "all", label: "All", icon: "StackIcon" },
+		{ id: "all", label: "All" },
 		...uniqueCategories.map((cat) => ({
 			id: cat.toLowerCase(),
 			label: cat,
-			icon: categoryIconMap[cat.toLowerCase()] ?? DEFAULT_CATEGORY_ICON,
 		})),
 	];
 });
