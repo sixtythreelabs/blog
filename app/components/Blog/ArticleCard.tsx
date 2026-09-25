@@ -3,6 +3,7 @@
 import { useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { type ArticleItem } from "../../types/posts";
 import { resolveIcon } from "../../utils/icons";
+import { formatReadTimeShort } from "../../utils/readingTime";
 import TransitionLink from "../TransitionLink";
 import AuthorsList from "./AuthorsList";
 import PixelIconDisplay from "../Blog/DotMatrixIcon";
@@ -66,6 +67,10 @@ export default function ArticleCard({ item, isListView, needsRightOutline = fals
 									•
 								</span>
 								{renderAuthors("text-light-gray text-[clamp(0.75rem,0.72rem+0.19vw,0.875rem)]")}
+								<span className="text-light-gray/60" aria-hidden="true">
+									•
+								</span>
+								<span className="text-light-gray text-[clamp(0.65rem,0.6rem+0.18vw,0.75rem)]">{formatReadTimeShort(item.readingTime)}</span>
 							</div>
 						</>
 					) : (
@@ -96,6 +101,10 @@ export default function ArticleCard({ item, isListView, needsRightOutline = fals
 								<span className="border border-light-gray/20 px-2 py-0.5 text-[0.6rem] uppercase tracking-wide text-white/80 bg-black/90 shrink-0">{item.category}</span>
 								<div className="ml-auto flex items-center gap-2 justify-end">
 									{renderAuthors("text-light-gray text-xs sm:text-sm")}
+									<span className="text-light-gray/60" aria-hidden="true">
+										•
+									</span>
+									<span className="text-light-gray text-[0.7rem] md:text-[0.8rem] leading-4">{formatReadTimeShort(item.readingTime)}</span>
 									<span className="text-light-gray/60" aria-hidden="true">
 										•
 									</span>

@@ -6,6 +6,7 @@ import { ScrambleText } from "../ScrambleText";
 import { ArticleItem } from "../../types/posts";
 import { hasPreloaderRun } from "../../utils/preloader";
 import { LandingNavigation } from "./LandingNavigation";
+import { LandingControls } from "./LandingControls";
 import { LandingHero } from "./LandingHero";
 import { LatestPostPreview } from "./LatestPostPreview";
 import { useTouchDevice } from "../../hooks/useTouchDevice";
@@ -130,6 +131,10 @@ const LandingSection = forwardRef<HTMLElement, LandingSectionProps>(function Lan
 				<LandingNavigation isLoaded={isLoaded} />
 
 				<div className="grid grid-cols-1 md:grid-cols-2 items-end gap-x-8 gap-y-8">
+					<div className="w-full md:col-span-full">
+						<LandingControls isLoaded={isLoaded} />
+					</div>
+
 					<LandingHero isLoaded={isLoaded} />
 
 					{latestPost && <LatestPostPreview latestPost={latestPost} />}

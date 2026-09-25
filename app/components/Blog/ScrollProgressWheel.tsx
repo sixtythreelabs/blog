@@ -6,8 +6,9 @@ import { LinearBlur } from "progressive-blur";
 import { useSound } from "../../context/SoundContext";
 import { useReaderMode } from "../../context/ReaderModeContext";
 
-// Article max-width (1080px) + scroll wheel width (~180px on each side) = ~1440px
-// Below this width, the scroll wheel overlaps with article content
+// Gutter the wheel needs beside the article: right-4 offset (16px) + w-32 track (128px)
+export const WHEEL_MIN_GUTTER = 144;
+// Fallback viewport width for the overlap check before the article is measured
 const BLUR_THRESHOLD_WIDTH = 1440;
 
 // Delay before the wheel slides out after the cursor leaves its zone
@@ -32,9 +33,13 @@ interface ScrollProgressWheelProps {
 	};
 	sections?: SectionMarker[];
 	labelsHidden?: boolean;
+	/** Hidden by default but revealed when hovering the right screen edge (reader mode off). */
+	revealOnEdge?: boolean;
+	/** Width (px) of the right-edge hover strip; falls back to its default width. */
+	edgeZoneWidth?: number;
 }
 
-export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, sections, labelsHidden }: ScrollProgressWheelProps) {
+export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, sections, labelsHidden, revealOnEdge = false, edgeZoneWidth }: ScrollProgressWheelProps) {
 	const [progress, setProgress] = useState(0);
 	const roundedProgress = Math.round(progress * 100);
 	const isDragging = useRef(false);
@@ -58,8 +63,8 @@ export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, secti
 		() => false
 	);
 
-	// Reader mode hides the wheel, but hovering the right edge reveals it.
-	const wheelVisible = !isReaderMode || isWheelHovered;
+	// Reader mode and edge reveal hide the wheel, but hovering the right edge shows it.
+	const wheelVisible = (!isReaderMode && !revealOnEdge) || isWheelHovered;
 
 	const handleWheelEnter = () => {
 		if (wheelHideTimerRef.current) {
@@ -129,20 +134,9 @@ export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, secti
 		};
 	}, []);
 
-	// Track if scroll wheel overlaps with article content
-	const [isOverlapping, setIsOverlapping] = useState(() => {
-		if (typeof window === "undefined") return false;
-		return window.innerWidth < BLUR_THRESHOLD_WIDTH;
-	});
-
-	useEffect(() => {
-		const checkOverlap = () => {
-			setIsOverlapping(window.innerWidth < BLUR_THRESHOLD_WIDTH);
-		};
-		checkOverlap();
-		window.addEventListener("resize", checkOverlap);
-		return () => window.removeEventListener("resize", checkOverlap);
-	}, []);
+	// Overlaps when the measured gutter can't fit the wheel; falls back to a viewport
+	// check until the article measurement is available
+	const isOverlapping = edgeZoneWidth !== undefined ? edgeZoneWidth < WHEEL_MIN_GUTTER : typeof window !== "undefined" && window.innerWidth < BLUR_THRESHOLD_WIDTH;
 
 	// Calculate active section based on scroll progress position
 	const activeSection = useMemo(() => {
@@ -211,7 +205,7 @@ export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, secti
 	return (
 		<motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} className="contents">
 			{/* Clickable backdrop to close wheel when blur is active */}
-			{isOverlapping && !isReaderMode && onClose && (
+			{isOverlapping && !isReaderMode && !revealOnEdge && onClose && (
 				<div
 					className="fixed inset-0 z-30 cursor-pointer"
 					onClick={onClose}
@@ -219,15 +213,24 @@ export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, secti
 					aria-hidden="true"
 				/>
 			)}
-			{/* Linear blur background for entire right side - only when overlapping with article */}
-			{isOverlapping && !isReaderMode && (
-				<div className="fixed right-0 top-0 bottom-0 w-[150%] pointer-events-none z-40">
+			{/* Localized blur behind the wheel - only when overlapping with article.
+			    Mounted with the wheel so it never trails the reveal (discrete visibility
+			    transitions or animating opacity over a backdrop-filter both render late). */}
+			{isOverlapping && !isReaderMode && wheelVisible && (
+				<div className="fixed right-0 top-0 bottom-0 w-[min(420px,50vw)] pointer-events-none z-40">
 					<LinearBlur side="right" strength={40} style={{ width: "100%", height: "100%" }} />
 				</div>
 			)}
-			{/* Hover strip that reveals the wheel while reader mode is active */}
-			{isReaderMode && (
-				<div className="fixed inset-y-0 right-0 z-40 w-10" onMouseEnter={handleWheelEnter} onTouchStart={handleWheelEnter} aria-hidden="true" />
+			{/* Hover strip that reveals the wheel from the right screen edge */}
+			{(isReaderMode || revealOnEdge) && (
+				<div
+					className="fixed inset-y-0 right-0 z-40 w-16"
+					style={edgeZoneWidth ? { width: edgeZoneWidth } : undefined}
+					onMouseEnter={handleWheelEnter}
+					onMouseLeave={revealOnEdge ? handleWheelLeave : undefined}
+					onTouchStart={handleWheelEnter}
+					aria-hidden="true"
+				/>
 			)}
 
 			<div
@@ -356,9 +359,6 @@ export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, secti
 						);
 					})}
 
-					{/* Shield to prevent morph cursor flicker in the label column area (desktop only, overlapping only) */}
-					{isOverlapping && sections?.length && !isTouchDevice && <div className="absolute top-0 bottom-0 right-12 w-[500px] pointer-events-auto" style={{ zIndex: 999 }} />}
-
 					{/* Section labels — rendered separately so they don't extend the morph group's hover zone */}
 					{sections?.map((section, index) => {
 						const isActive = section.id === activeSection;
@@ -373,7 +373,9 @@ export function ScrollProgressWheel({ onScrub, onClose, isDarkMode, theme, secti
 					return (
 						<motion.span
 							key={`label-${section.id}`}
-							className={`absolute right-12 uppercase font-departure-mono whitespace-nowrap pointer-events-auto cursor-pointer transition-opacity duration-200 ${
+							className={`absolute right-12 uppercase font-departure-mono whitespace-nowrap cursor-pointer transition-opacity duration-200 ${
+								isTouchDevice ? "pointer-events-auto" : "pointer-events-none"
+							} ${
 								isActive ? "font-medium text-[10px] xl:text-xs 2xl:text-sm" : "text-[9px] xl:text-[10px] 2xl:text-xs"
 							} ${
 								shouldHideLabel

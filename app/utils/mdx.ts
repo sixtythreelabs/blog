@@ -16,7 +16,6 @@ export type BlogPreview = ArticleItem & {
 	slug: string;
 	tags: string[];
 	heroImage?: string;
-	readingTime: string;
 };
 
 export type BlogPostMetadata = BlogPreview;

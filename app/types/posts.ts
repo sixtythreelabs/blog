@@ -25,6 +25,7 @@ export type ArticleItem = {
   authors: ArticleAuthor[];
   category: string;
   icon: IconKey;
+  readingTime: string;
 };
 
 export type ArticleFrontmatter = {

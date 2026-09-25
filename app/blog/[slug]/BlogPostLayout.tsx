@@ -8,7 +8,7 @@ import CopyLinkButton from "../../components/CopyLinkButton";
 import LikeButton from "../../components/Blog/LikeButton";
 import AuthorsList from "../../components/Blog/AuthorsList";
 import PixelIconDisplay from "../../components/Blog/DotMatrixIcon";
-import { ScrollProgressWheel } from "../../components/Blog/ScrollProgressWheel";
+import { ScrollProgressWheel, WHEEL_MIN_GUTTER } from "../../components/Blog/ScrollProgressWheel";
 import Dither from "../../components/Dither";
 import { resolveIcon } from "../../utils/icons";
 import { formatShortDate } from "../../utils/date";
@@ -30,9 +30,6 @@ type BlogPostLayoutProps = {
 	children: ReactNode;
 };
 
-// Minimum viewport width (px) for the progress wheel to be visible by default
-const PROGRESS_WHEEL_MIN_WIDTH = 1280;
-
 export default function BlogPostLayout({ metadata, readTimeLabel, formattedDate, children }: BlogPostLayoutProps) {
 	const [isDarkMode, setIsDarkMode] = useState(() => {
 		if (typeof window === "undefined") return false;
@@ -53,11 +50,17 @@ export default function BlogPostLayout({ metadata, readTimeLabel, formattedDate,
 	const { playSound, isMuted, toggleMute } = useSound();
 	const { isReaderMode, setReaderMode } = useReaderMode();
 
-	const [isProgressWheelVisible, setIsProgressWheelVisible] = useState(() => {
-		if (typeof window === "undefined") return true;
-		return window.innerWidth >= PROGRESS_WHEEL_MIN_WIDTH;
+	// Only the mobile action bar toggles this; the wheel starts hidden everywhere
+	const [isProgressWheelVisible, setIsProgressWheelVisible] = useState(false);
+	// Hover-capable devices reveal the wheel from the right screen edge. Initialized
+	// synchronously so a revisited load never flashes a visible wheel before effects run.
+	const [isEdgeRevealDevice, setIsEdgeRevealDevice] = useState(() => {
+		if (typeof window === "undefined") return false;
+		return window.matchMedia("(min-width: 768px) and (hover: hover)").matches;
 	});
-	const userToggledWheel = useRef(false);
+	// Gutter widths between the viewport edges and the article box, used as the
+	// edge-reveal hover zones and to decide whether the wheel fits beside the article
+	const [articleGutters, setArticleGutters] = useState({ left: 0, right: 0 });
 
 	const { outlineItems, outlineWidth, outlinePosition, activeHeadingId, isOutlineOpen, handleCloseOutline, handleNavigateFromOutline } = useArticleOutline({
 		articleRef,
@@ -68,8 +71,50 @@ export default function BlogPostLayout({ metadata, readTimeLabel, formattedDate,
 		postHref: metadata.href,
 	});
 
+	const edgeRevealActive = mounted && isPreloaderDone && !isTransitioning && !isReaderMode && isEdgeRevealDevice;
+	const outlineRevealOnEdge = edgeRevealActive && !isOutlineOpen;
+	// When the gutter fits the wheel it stays visible; otherwise hover devices reveal
+	// it from the right edge (reader mode keeps its own hover reveal).
+	const wheelPinnedBySpace = articleGutters.right >= WHEEL_MIN_GUTTER && !isReaderMode;
+	const wheelRevealOnEdge = isEdgeRevealDevice && !wheelPinnedBySpace;
+
+	// Track the edge-reveal device category (mouse/trackpad, md and up)
+	useEffect(() => {
+		const edgeMq = window.matchMedia("(min-width: 768px) and (hover: hover)");
+		const handleChange = () => setIsEdgeRevealDevice(edgeMq.matches);
+		handleChange();
+		try {
+			edgeMq.addEventListener("change", handleChange);
+			return () => edgeMq.removeEventListener("change", handleChange);
+		} catch {
+			// Safari < 14 fallback
+			edgeMq.addListener(handleChange);
+			return () => edgeMq.removeListener(handleChange);
+		}
+	}, []);
+
+	// Measure the gutters before paint so the edge zones and wheel pinning are correct
+	useLayoutEffect(() => {
+		const el = articleRef.current;
+		if (!el) return;
+		const measure = () => {
+			const rect = el.getBoundingClientRect();
+			setArticleGutters({
+				left: Math.max(0, Math.round(rect.left)),
+				right: Math.max(0, Math.round(window.innerWidth - rect.right)),
+			});
+		};
+		measure();
+		window.addEventListener("resize", measure);
+		const observer = new ResizeObserver(measure);
+		observer.observe(el);
+		return () => {
+			window.removeEventListener("resize", measure);
+			observer.disconnect();
+		};
+	}, []);
+
 	const handleToggleProgressWheel = useCallback(() => {
-		userToggledWheel.current = true;
 		setIsProgressWheelVisible((prev) => !prev);
 	}, []);
 
@@ -127,21 +172,6 @@ export default function BlogPostLayout({ metadata, readTimeLabel, formattedDate,
 		window.scrollTo({ top: newProgress * scrollable, behavior: "instant" });
 		// setScrollProgress(newProgress);
 	}, []);
-
-	// Auto-hide progress wheel on narrow screens
-	useEffect(() => {
-		if (!mounted) return;
-		const handleResize = () => {
-			const isWideEnough = window.innerWidth >= PROGRESS_WHEEL_MIN_WIDTH;
-			// Only auto-hide, don't force show (respect user's manual toggle)
-			if (!isWideEnough && !userToggledWheel.current) {
-				setIsProgressWheelVisible(false);
-			}
-		};
-		handleResize(); // Check on mount
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, [mounted]);
 
 	const theme = useMemo(() => (isDarkMode ? THEME_PRESETS.dark : THEME_PRESETS.light), [isDarkMode]);
 
@@ -436,7 +466,7 @@ export default function BlogPostLayout({ metadata, readTimeLabel, formattedDate,
 				{mounted && !isTransitioning && isPreloaderDone && (
 					<>
 						<OutlinePanel
-							isOpen={isOutlineOpen}
+							isOpen={isOutlineOpen || outlineRevealOnEdge}
 							mode="side"
 							width={outlineWidth}
 							position={outlinePosition}
@@ -447,15 +477,21 @@ export default function BlogPostLayout({ metadata, readTimeLabel, formattedDate,
 							onClose={handleCloseOutline}
 							onNavigate={handleNavigateFromOutline}
 							isDarkMode={isDarkMode}
+							revealOnEdge={outlineRevealOnEdge}
+							edgeZoneWidth={articleGutters.left || undefined}
 						/>
-						{isProgressWheelVisible && (
+						{(isProgressWheelVisible || wheelPinnedBySpace || wheelRevealOnEdge) && (
 							<ScrollProgressWheel
 								onScrub={handleScrub}
-								onClose={handleToggleProgressWheel}
+								onClose={isProgressWheelVisible ? handleToggleProgressWheel : undefined}
 								isDarkMode={isDarkMode}
 								theme={{ bg: theme.main }}
 								sections={sectionsWithPositions}
-								labelsHidden={isOutlineOpen}
+								// Hover devices show labels only while the wheel is hovered;
+								// touch keeps them visible since there's no hover to reveal them
+								labelsHidden={isOutlineOpen || isEdgeRevealDevice}
+								revealOnEdge={wheelRevealOnEdge}
+								edgeZoneWidth={articleGutters.right || undefined}
 							/>
 						)}
 						<MobileActionBar

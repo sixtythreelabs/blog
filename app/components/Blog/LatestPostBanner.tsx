@@ -3,6 +3,7 @@
 import { type ArticleItem } from "../../types/posts";
 import { resolveIcon } from "../../utils/icons";
 import { formatFullDate } from "../../utils/date";
+import { formatReadTimeShort } from "../../utils/readingTime";
 import TransitionLink from "../TransitionLink";
 import { ScrambleText } from "../ScrambleText";
 import Dither from "../Dither";
@@ -49,7 +50,7 @@ export default function LatestPostBanner({ latestArticle }: LatestPostBannerProp
 					<div className="flex items-center gap-2 sm:gap-3 min-w-0">
 						<span className="border border-white/40 px-2 py-0.5 sm:px-2.5 text-[clamp(0.55rem,0.49rem+0.23vw,0.7rem)] uppercase tracking-wide text-black bg-white/80 shrink-0">{latestArticle.category}</span>
 						<span className="text-[clamp(0.75rem,0.72rem+0.19vw,0.875rem)] text-off-white/70 truncate">
-							{latestArticle.authors.map((a) => a.name).join(" and ")} · {formatFullDate(latestArticle.dateTime)}
+							{latestArticle.authors.map((a) => a.name).join(" and ")} · {formatFullDate(latestArticle.dateTime)} · {formatReadTimeShort(latestArticle.readingTime)}
 						</span>
 					</div>
 					<TransitionLink

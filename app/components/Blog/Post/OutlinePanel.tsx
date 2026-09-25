@@ -2,6 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { LinearBlur } from "progressive-blur";
 import type { OutlineItem, OutlinePosition } from "./constants";
 import { useSound } from "../../../context/SoundContext";
 import { useReaderMode } from "../../../context/ReaderModeContext";
@@ -18,13 +19,17 @@ type OutlinePanelProps = {
 	onClose: () => void;
 	onNavigate: () => void;
 	isDarkMode: boolean;
+	/** Hidden by default but revealed when hovering the left screen edge (reader mode off). */
+	revealOnEdge?: boolean;
+	/** Width (px) of the left-edge hover strip; falls back to its default width. */
+	edgeZoneWidth?: number;
 };
 
 // Delay before the panel slides out after the cursor leaves its zone,
 // so quick mouse passes across the strip don't flash it
 const HIDE_DELAY_MS = 250;
 
-export default function OutlinePanel({ isOpen, width, position, textClass, items, activeId, onNavigate, isDarkMode }: OutlinePanelProps) {
+export default function OutlinePanel({ isOpen, width, position, textClass, items, activeId, onNavigate, isDarkMode, revealOnEdge = false, edgeZoneWidth }: OutlinePanelProps) {
 	const { playSound } = useSound();
 	const { isReaderMode } = useReaderMode();
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -76,15 +81,17 @@ export default function OutlinePanel({ isOpen, width, position, textClass, items
 	const { top, left } = position;
 
 	const separatorClass = isDarkMode ? "border-white/10" : "border-black/10";
-	// Always visible by default; in reader mode it hides and reveals on hover.
-	const isVisible = !isReaderMode || isHovered;
+	// Always visible by default; reader mode and edge reveal hide it until hovered.
+	const isVisible = (!isReaderMode && !revealOnEdge) || isHovered;
 
 	const aside = (
 		<aside
 			data-no-morph
 			className={`absolute inset-y-0 left-0 flex flex-col ${textClass} transition-all duration-300 ease-out ${
-				isVisible ? "translate-x-0 opacity-100" : "-translate-x-6 opacity-0 pointer-events-none"
+				isVisible ? "translate-x-0 opacity-100 pointer-events-auto" : "-translate-x-6 opacity-0 pointer-events-none"
 			}`}
+			onMouseEnter={revealOnEdge ? handleZoneEnter : undefined}
+			onMouseLeave={revealOnEdge ? handleZoneLeave : undefined}
 		>
 			<div className="flex items-center gap-2 px-4 pb-3" style={{ paddingTop: typeof top === "number" ? top : undefined }}>
 				<div className="flex items-center gap-2 font-departure-mono font-medium text-[0.9rem] uppercase tracking-[0.16em]">
@@ -136,18 +143,37 @@ export default function OutlinePanel({ isOpen, width, position, textClass, items
 	);
 
 	return createPortal(
-		<div
-			data-no-morph
-			className="fixed inset-y-0 left-0 z-90"
-			style={{
-				left: typeof left === "number" || typeof left === "string" ? left : undefined,
-				width,
-			}}
-			onMouseEnter={handleZoneEnter}
-			onMouseLeave={handleZoneLeave}
-		>
-			{aside}
-		</div>,
+		<>
+			{/* Hover strip that reveals the panel from the left screen edge */}
+			{revealOnEdge && (
+				<div
+					data-no-morph
+					className="fixed inset-y-0 left-0 z-90 w-16"
+					style={edgeZoneWidth ? { width: edgeZoneWidth } : undefined}
+					onMouseEnter={handleZoneEnter}
+					onMouseLeave={handleZoneLeave}
+					aria-hidden="true"
+				/>
+			)}
+			{/* Progressive blur behind the revealed panel, mirroring the scroll wheel */}
+			{revealOnEdge && isVisible && (
+				<div className="pointer-events-none fixed inset-y-0 left-0 z-40 w-[min(420px,50vw)]">
+					<LinearBlur side="left" strength={40} style={{ width: "100%", height: "100%" }} />
+				</div>
+			)}
+			<div
+				data-no-morph
+				className={`fixed inset-y-0 left-0 z-90 ${revealOnEdge ? "pointer-events-none" : ""}`}
+				style={{
+					left: typeof left === "number" || typeof left === "string" ? left : undefined,
+					width,
+				}}
+				onMouseEnter={revealOnEdge ? undefined : handleZoneEnter}
+				onMouseLeave={revealOnEdge ? undefined : handleZoneLeave}
+			>
+				{aside}
+			</div>
+		</>,
 		document.body
 	);
 }

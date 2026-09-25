@@ -37,7 +37,7 @@ const NavDigit = forwardRef<HTMLSpanElement, NavDigitProps>(
 		// looks identical to the old transform-scaled version (which magnified
 		// the base blur by the scale factor)
 		const blurStrength = (isSmallScreen ? 2 : 8) * fontScale;
-		const digitStyle = { fontSize: `calc(clamp(2rem, 6vw, 5rem) * ${fontScale})` };
+		const digitStyle = { fontSize: `min(calc(clamp(2rem, 6vw, 5rem) * ${fontScale}), 30vh)` };
 		const morphingTextRef = useRef<MorphingTextHandle>(null);
 		const { subscribe, getSnapshot } = useLayoutContext();
 

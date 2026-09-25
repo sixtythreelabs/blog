@@ -1,7 +1,13 @@
 export const CONTENT = {
 	hero: {
-		tagline: "I build things on the internet and write about my experiments in tech, philosophy, and travel.",
-		work: "Currently, web3 @andalusia-labs",
+		tagline:
+			"Blockchains are some of the most resilient distributed systems ever built. Our team has spent years working on low-level blockchain infrastructure, and we’re bringing that experience to self-hosted systems.",
+		work: "We’re building a platform that helps users and organizations connect their infrastructure so it can work together as one system, while still giving each machine and environment clear boundaries and control.",
+		cta: {
+			prefix: "Follow",
+			link: { label: "Chaar.ai", href: "https://chaar.ai" },
+			suffix: "to learn more about what we’re building.",
+		},
 	},
 	links: {
 		about: { label: "ABOUT", href: "/about" },
