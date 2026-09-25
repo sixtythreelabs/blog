@@ -111,3 +111,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Next.js generated type declaration
+next-env.d.ts

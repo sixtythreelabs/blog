@@ -110,7 +110,7 @@ const LandingSection = forwardRef<HTMLElement, LandingSectionProps>(function Lan
 			<section
 				ref={setRef}
 				onMouseMove={handleMouseMove}
-				className="absolute inset-0 flex flex-col h-dvh p-8 gap-8 border border-light-gray/20 bg-background text-foreground overflow-y-auto overflow-x-hidden md:h-screen md:overflow-hidden"
+				className="absolute inset-0 flex flex-col p-8 gap-8 border border-light-gray/20 bg-background text-foreground overflow-y-auto overflow-x-hidden overscroll-contain [-webkit-overflow-scrolling:touch]"
 			>
 				{/* Cursor crosshairs - hidden on touch devices */}
 				{!isTouchDevice && (

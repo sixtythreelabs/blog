@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import LandingSection from "./components/Landing";
 import type { ArticleItem } from "./types/posts";
 import { useHomeMorph } from "./hooks";
@@ -14,9 +15,14 @@ export default function HomeClient({ articles }: HomeClientProps) {
 
 	useHomeMorph();
 
+	useEffect(() => {
+		document.documentElement.classList.add("landing-lock");
+		return () => document.documentElement.classList.remove("landing-lock");
+	}, []);
+
 	return (
 		<main>
-			<div className="relative min-h-dvh">
+			<div className="fixed inset-0 overflow-hidden">
 				<LandingSection latestPost={latestArticle} />
 			</div>
 		</main>

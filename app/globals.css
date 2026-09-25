@@ -124,6 +124,16 @@ body {
 	overscroll-behavior-y: none;
 }
 
+html.landing-lock,
+html.landing-lock body {
+	height: 100%;
+	overflow: hidden;
+}
+
+html.landing-lock body {
+	min-height: 0;
+}
+
 /* Hex flip animation styles */
 .hex-container {
 	position: relative;
