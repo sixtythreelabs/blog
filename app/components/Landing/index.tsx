@@ -99,51 +99,42 @@ const LandingSection = forwardRef<HTMLElement, LandingSectionProps>(function Lan
 	}, []);
 
 	return (
-		<>
-			<div aria-hidden="true" className="pointer-events-none absolute inset-px z-20">
-				<div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-light-gray" />
-				<div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-light-gray" />
-				<div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-light-gray" />
-				<div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-light-gray" />
+		<section
+			ref={setRef}
+			onMouseMove={handleMouseMove}
+			className="relative flex flex-col min-h-screen p-8 pt-[30vh] pb-[calc(2rem+env(safe-area-inset-bottom,0px))] border border-light-gray/20 bg-background text-foreground"
+		>
+			{/* Cursor crosshairs - hidden on touch devices */}
+			{!isTouchDevice && (
+				<>
+					<div ref={horizontalRef} className="absolute top-0 left-0 w-full h-px bg-light-gray/20 pointer-events-none z-5" style={{ willChange: "transform" }} />
+					<div ref={verticalRef} className="absolute top-0 left-0 h-full w-px bg-light-gray/20 pointer-events-none z-5" style={{ willChange: "transform" }} />
+				</>
+			)}
+			{/* Coordinates */}
+			<div ref={coordinatesRef} className="hidden md:block absolute bottom-8 left-8 font-mono text-10xs text-off-white/50 pointer-events-none z-20 tabular-nums">
+				<ScrambleText text="[ 0° E , 0° N ]" scrambleOnMount={isLoaded} />
 			</div>
 
-			<section
-				ref={setRef}
-				onMouseMove={handleMouseMove}
-				className="absolute inset-0 flex flex-col p-8 gap-8 border border-light-gray/20 bg-background text-foreground overflow-y-auto overflow-x-hidden overscroll-contain [-webkit-overflow-scrolling:touch]"
-			>
-				{/* Cursor crosshairs - hidden on touch devices */}
-				{!isTouchDevice && (
-					<>
-						<div ref={horizontalRef} className="absolute top-0 left-0 w-full h-px bg-light-gray/20 pointer-events-none z-5" style={{ willChange: "transform" }} />
-						<div ref={verticalRef} className="absolute top-0 left-0 h-full w-px bg-light-gray/20 pointer-events-none z-5" style={{ willChange: "transform" }} />
-					</>
-				)}
-				{/* Coordinates */}
-				<div ref={coordinatesRef} className="hidden md:block absolute bottom-8 left-8 font-mono text-10xs text-off-white/50 pointer-events-none z-20 tabular-nums">
-					<ScrambleText text="[ 0° E , 0° N ]" scrambleOnMount={isLoaded} />
-				</div>
+			<div className="absolute top-0 left-0 w-full h-[30vh] z-0 pointer-events-none">
+				<Image src="/images/map-narrow.avif" alt="Map background" fill className="object-cover object-left md:hidden" priority quality={100} sizes="100vw" />
+				<Image src="/images/map-wide.avif" alt="Map background" fill className="object-cover object-left hidden md:block" priority quality={100} sizes="100vw" />
+			</div>
 
-				<div className="absolute top-0 left-0 w-full h-[30%] z-0 pointer-events-none">
-					<Image src="/images/map-narrow.avif" alt="Map background" fill className="object-cover object-left md:hidden" priority quality={100} sizes="100vw" />
-					<Image src="/images/map-wide.avif" alt="Map background" fill className="object-cover object-left hidden md:block" priority quality={100} sizes="100vw" />
-				</div>
+			<div className="relative z-10 flex-1 flex flex-col justify-between gap-12 border-t border-light-gray/20 w-full">
+				<LandingNavigation isLoaded={isLoaded} />
 
-				<div className="relative z-10 mt-auto h-[70%] flex flex-col justify-between gap-12 border-t border-light-gray/20 w-full">
-					<LandingNavigation isLoaded={isLoaded} />
-
-					<div className="grid grid-cols-1 md:grid-cols-2 items-end gap-x-8 gap-y-8">
-						<div className="w-full md:col-span-full">
-							<LandingControls isLoaded={isLoaded} />
-						</div>
-
-						<LandingHero isLoaded={isLoaded} />
-
-						{latestPost && <LatestPostPreview latestPost={latestPost} />}
+				<div className="grid grid-cols-1 md:grid-cols-2 items-end gap-x-8 gap-y-8">
+					<div className="w-full md:col-span-full">
+						<LandingControls isLoaded={isLoaded} />
 					</div>
+
+					<LandingHero isLoaded={isLoaded} />
+
+					{latestPost && <LatestPostPreview latestPost={latestPost} />}
 				</div>
-			</section>
-		</>
+			</div>
+		</section>
 	);
 });
 
