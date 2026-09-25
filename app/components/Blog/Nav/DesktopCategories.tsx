@@ -98,8 +98,64 @@ export default function DesktopCategories({
 
 	return (
 		<>
-			<div className="hidden md:flex items-center w-full gap-6">
-				<div ref={navRef} className="flex items-center gap-3 flex-1 min-w-0">
+				<div className="hidden md:flex items-center w-full gap-6">
+					<div ref={searchRef} className="flex items-center gap-3">
+						<TransitionLink
+							href="/"
+							transitionLabel="Home"
+							className="flex items-center justify-center w-9 h-8 border border-black bg-black/90 text-off-white transition-colors duration-200"
+							aria-label="Go to homepage"
+						>
+							<HouseIcon size={16} weight="regular" />
+						</TransitionLink>
+						<button
+							type="button"
+							onClick={() => toggleMute()}
+							onMouseEnter={() => playSound("hover")}
+							className={`flex items-center justify-center w-9 h-8 border transition-colors duration-200 ${
+								isMuted ? "border-black bg-transparent text-black" : "border-black bg-black/90 text-off-white"
+							}`}
+							aria-pressed={!isMuted}
+							aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
+							title={isMuted ? "Unmute sounds" : "Mute sounds"}
+						>
+							{isMuted ? <SpeakerSlashIcon size={16} weight="regular" /> : <SpeakerHighIcon size={16} weight="regular" />}
+						</button>
+						<button
+							type="button"
+							onClick={() => {
+								onViewModeChange(nextViewMode);
+							}}
+							onMouseEnter={() => playSound("hover")}
+							className="flex items-center justify-center w-9 h-8 border border-black bg-black/90 text-off-white transition-colors duration-200"
+							aria-label={toggleAriaLabel}
+							title={toggleAriaLabel}
+						>
+							<ToggleIcon size={16} weight="regular" />
+						</button>
+						<SearchBar ref={searchInputRef} searchQuery={searchQuery} onSearchChange={onSearchChange} shortcutLabel={shortcutLabel} showSearch={showSearch} />
+					</div>
+					<div ref={navRef} className="flex items-center gap-3 flex-1 min-w-0 justify-end">
+					<ul className="flex relative gap-4 whitespace-nowrap list-none font-semi-mono text-xs tracking-tighter overflow-hidden">
+						{visibleCategories.map((category) => {
+							return (
+								<li key={category.id}>
+								<button
+									onClick={() => {
+										onCategoryChange(category.id);
+									}}
+										onMouseEnter={() => playSound("hover")}
+										className={`flex items-center gap-2 px-4 py-1.5 h-8 box-border border transition-all duration-200 ${
+											activeCategory === category.id ? "bg-background text-foreground/80 border-background" : "border-background text-background/80"
+										}`}
+										data-morph
+									>
+										{category.label}
+									</button>
+								</li>
+							);
+						})}
+					</ul>
 					<div className="relative" ref={dropdownRef}>
 						<button
 							ref={allButtonRef}
@@ -118,7 +174,7 @@ export default function DesktopCategories({
 						</button>
 
 						{isDropdownOpen && (
-							<div className="absolute top-full left-0 mt-2 bg-foreground border border-background shadow-lg z-50 min-w-[200px]" role="menu">
+							<div className="absolute top-full right-0 mt-2 bg-foreground border border-background shadow-lg z-50 min-w-[200px]" role="menu">
 								<ul className="p-1.5 max-h-72 overflow-auto">
 									{categories.map((category) => {
 										return (
@@ -143,62 +199,6 @@ export default function DesktopCategories({
 							</div>
 						)}
 					</div>
-					<ul className="flex relative gap-4 whitespace-nowrap list-none font-semi-mono text-xs tracking-tighter overflow-hidden">
-						{visibleCategories.map((category) => {
-							return (
-								<li key={category.id}>
-								<button
-									onClick={() => {
-										onCategoryChange(category.id);
-									}}
-										onMouseEnter={() => playSound("hover")}
-										className={`flex items-center gap-2 px-4 py-1.5 h-8 box-border border transition-all duration-200 ${
-											activeCategory === category.id ? "bg-background text-foreground/80 border-background" : "border-background text-background/80"
-										}`}
-										data-morph
-									>
-										{category.label}
-									</button>
-								</li>
-							);
-						})}
-					</ul>
-				</div>
-				<div ref={searchRef} className="flex items-center gap-3">
-					<TransitionLink
-						href="/"
-						transitionLabel="Home"
-						className="flex items-center justify-center w-9 h-8 border border-black bg-black/90 text-off-white transition-colors duration-200"
-						aria-label="Go to homepage"
-					>
-						<HouseIcon size={16} weight="regular" />
-					</TransitionLink>
-					<button
-						type="button"
-						onClick={() => toggleMute()}
-						onMouseEnter={() => playSound("hover")}
-						className={`flex items-center justify-center w-9 h-8 border transition-colors duration-200 ${
-							isMuted ? "border-black bg-transparent text-black" : "border-black bg-black/90 text-off-white"
-						}`}
-						aria-pressed={!isMuted}
-						aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
-						title={isMuted ? "Unmute sounds" : "Mute sounds"}
-					>
-						{isMuted ? <SpeakerSlashIcon size={16} weight="regular" /> : <SpeakerHighIcon size={16} weight="regular" />}
-					</button>
-					<button
-						type="button"
-						onClick={() => {
-							onViewModeChange(nextViewMode);
-						}}
-						onMouseEnter={() => playSound("hover")}
-						className="flex items-center justify-center w-9 h-8 border border-black bg-black/90 text-off-white transition-colors duration-200"
-						aria-label={toggleAriaLabel}
-						title={toggleAriaLabel}
-					>
-						<ToggleIcon size={16} weight="regular" />
-					</button>
-					<SearchBar ref={searchInputRef} searchQuery={searchQuery} onSearchChange={onSearchChange} shortcutLabel={shortcutLabel} showSearch={showSearch} />
 				</div>
 			</div>
 
