@@ -45,7 +45,7 @@ export default function LatestPostBanner({ latestArticle }: LatestPostBannerProp
 					<h2 className="text-[clamp(1.25rem,0.88rem+1.52vw,2.25rem)] font-semibold text-off-white">{latestArticle.label}</h2>
 				</div>
 				<p className="text-[clamp(0.8125rem,0.74rem+0.29vw,1rem)] text-off-white/70 leading-relaxed max-w-3xl line-clamp-3">{latestArticle.intro}</p>
-				<div className="flex flex-wrap items-center justify-between gap-4">
+				<div className="flex flex-wrap items-end justify-between gap-4">
 					<div className="flex items-center gap-2 sm:gap-3 min-w-0">
 						<span className="border border-white/40 px-2 py-0.5 sm:px-2.5 text-[0.6rem] uppercase tracking-wide text-black bg-white/80 shrink-0">{latestArticle.category}</span>
 						<div className="flex items-center gap-1.5 min-w-0 text-off-white/70">
