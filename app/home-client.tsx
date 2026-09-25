@@ -16,7 +16,7 @@ export default function HomeClient({ articles }: HomeClientProps) {
 
 	return (
 		<main>
-			<div className="relative min-h-screen">
+			<div className="relative min-h-dvh">
 				<LandingSection latestPost={latestArticle} />
 			</div>
 		</main>
