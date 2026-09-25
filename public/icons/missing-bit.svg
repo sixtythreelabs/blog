@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <rect width="16" height="16" fill="black"/>
+  <!-- Each bit: 2x2px with 1px gaps -->
+  <g transform="translate(16 0) scale(-1 1) rotate(180 8 8)" fill="white">
+    <!-- Row 1 (4 bits) -->
+    <rect x="2.5"  y="2.5" width="2" height="2" rx="0.25" />
+    <rect x="5.5"  y="2.5" width="2" height="2" rx="0.25" />
+    <rect x="8.5"  y="2.5" width="2" height="2" rx="0.25" />
+    <rect x="11.5" y="2.5" width="2" height="2" rx="0.25" />
+
+    <!-- Row 2 (4 bits, one missing) -->
+    <rect x="2.5"  y="5.5" width="2" height="2" rx="0.25" />
+    <rect x="5.5"  y="5.5" width="2" height="2" rx="0.25" />
+    <!-- Missing bit intentionally omitted here -->
+    <rect x="11.5" y="5.5" width="2" height="2" rx="0.25" />
+
+    <!-- Row 3 (4 bits) -->
+    <rect x="2.5"  y="8.5" width="2" height="2" rx="0.25" />
+    <rect x="5.5"  y="8.5" width="2" height="2" rx="0.25" />
+    <rect x="8.5"  y="8.5" width="2" height="2" rx="0.25" />
+    <rect x="11.5" y="8.5" width="2" height="2" rx="0.25" />
+
+    <!-- Row 4 (4 bits) -->
+    <rect x="2.5"  y="11.5" width="2" height="2" rx="0.25" />
+    <rect x="5.5"  y="11.5" width="2" height="2" rx="0.25" />
+    <rect x="8.5"  y="11.5" width="2" height="2" rx="0.25" />
+    <rect x="11.5" y="11.5" width="2" height="2" rx="0.25" />
+  </g>
+</svg>

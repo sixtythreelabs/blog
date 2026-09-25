@@ -1,0 +1,21 @@
+[Unit]
+Description=63bytes.com Next.js Web Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=__PROJECT_PATH__
+ExecStart=__BUN_PATH__ run start
+Environment=PORT=__PORT__
+Environment=NODE_ENV=production
+Restart=on-failure
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=63bytes
+
+[Install]
+WantedBy=default.target
+
