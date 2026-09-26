@@ -102,7 +102,7 @@ const LandingSection = forwardRef<HTMLElement, LandingSectionProps>(function Lan
 		<section
 			ref={setRef}
 			onMouseMove={handleMouseMove}
-			className="relative flex flex-col min-h-screen p-8 pt-[30vh] pb-[calc(2rem+env(safe-area-inset-bottom,0px))] border border-light-gray/20 bg-background text-foreground"
+			className="relative flex flex-col min-h-screen p-8 pt-[30vh] pb-[calc(2rem+env(safe-area-inset-bottom,0px))] bg-background text-foreground"
 		>
 			{/* Cursor crosshairs - hidden on touch devices */}
 			{!isTouchDevice && (
