@@ -277,7 +277,7 @@ export default function BlogPostLayout({ metadata, readTimeLabel, formattedDate,
 						<div ref={articleRef} className="ul-cross w-full">
 							<article
 								data-code-theme={isDarkMode ? "dark" : "light"}
-								className={`relative border ${theme.articleSurface} px-8 pt-0 pb-6 sm:px-12 sm:pt-10 sm:pb-4 lg:px-36 lg:pt-20 lg:pb-8`}
+								className={`relative border ${theme.articleSurface} px-8 pt-8 pb-6 sm:px-12 sm:pt-10 sm:pb-4 lg:px-36 lg:pt-20 lg:pb-8`}
 							>
 								<div className={`absolute inset-0 grid grid-cols-1 lg:grid-cols-3 pointer-events-none select-none transition-opacity duration-300 ${isReaderMode ? "opacity-0" : "opacity-100"}`}>
 									<div className={`hidden lg:block border-r border-dashed ${theme.gridLine}`} />
